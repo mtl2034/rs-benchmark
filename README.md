@@ -1,0 +1,184 @@
+## Introduction
+
+`rs-benchmark` is a performance testing tool provided by [RStor Inc](https://rstor.io/) to effectively compare different object storages with different protocols. The testing tool is loosely based on the [Nasuni](https://www.nasuni.com/infographic-2015-state-of-cloud-storage/) performance benchmarking methodologies used to test the performance of different cloud storage providers.
+
+This tool is provided to independently benchmark RStorage S3 service provided by RStor Inc, as well as the other major CSP’s object storage services like Amazon S3, Azure Blob Storage, Google Cloud Storage, as well as others that rely on the same protocols.
+
+We decided to open-source `rs-benchmark` because we found out that other s3-benchmark tools (like [this one](https://github.com/wasabi-tech/s3-benchmark)) don't correctly compute test results: when a `GET` test is performed, the tools only consider as error a bad `HTTP` request, i.e. they don't catch server errors. For example, if the server returns an error, e.g. `404` after requesting a non-existent object, the tools will ignore it and the test is considered passed, thus incorrectly measuring a higher throughput.
+
+## Building
+
+#### Requirements
+- `git`
+- The Go compiler, `go` version 1.11 or greater
+- A reasonably recent Linux distro
+
+#### Install Go compiler on Linux
+
+On Debian, Ubuntu:
+
+```
+sudo apt-get install golang
+```
+
+On Debian stretch, you will need to enable backports (https://backports.debian.org/Instructions/) and install with:
+
+```
+apt-get -t stretch-backports install golang
+```
+
+On CentOS 7 / RHEL 7:
+
+```
+yum install epel-release
+yum install go
+```
+
+If you cannot find a package for your distro, follow the instructions at https://golang.org/doc/install
+
+#### Compiling
+
+Clone the repository with
+```
+git clone https://github.com/RstorLabs/rs-benchmark.git
+```
+Now run
+```
+cd rs-benchmark && go build
+```
+The executable `rs-benchmark` should now be visible in the project folder.
+
+## Usage
+
+The tool accepts the following options:
+```
+./rs-benchmark [OPTIONS]
+```
+Below are the available command line arguments to the program:
+
+```
+  -a string
+    	Access key
+  -b string
+    	Bucket for testing
+  -d int
+    	Duration of each test in seconds (default 60)
+  -h, --help
+        Show help screen
+  -ip string
+    	forces all hostnames to resolve to this address (s3v2, s3v4 signing protocol only)
+  -l int
+    	Number of times to repeat test (default 1)
+  -maxRetries int
+    	number of retries on failure (default 0. s3v4 only)
+  -multipart
+    	use multipart (s3v4 only)
+  -multipart-concurrency int
+    	concurrency to use for multipart requests (default 5)
+  -multipart-size string
+    	Size of the multipart parts (default "5M")
+  -pause
+    	whether to pause between phases
+  -prefix string
+    	will create objects with key: 'prefix-number' (default "Object")
+  -protocol string
+    	client protocol: s3v2, s3v4, azure, gcp
+  -r string
+    	Region for testing
+  -s string
+    	Secret key
+  -t int
+    	Number of parallel requests to run (default 1)
+  -u string
+    	URL for endpoint with method prefix (e.g. https://s3.YOUR_CUSTOMER_NAME.rstorlabs.io)
+  -v	Verbose error output
+  -version
+        Show version
+  -z string
+    	Size of objects in bytes with suffix K, M, and G (default "1M")
+
+```
+
+At a bare minimum you need to specify: `-a` (access key), `-s` (secret key), `-b` (test bucket), `-u` (endpoint) and `-protocol` (client protocol).
+
+## Examples
+
+Suppose we want to benchmark the RStorage S3 service, using a bucket named `testbucket`, having object size of 10MB, for 90 seconds, using 4 parallel transfers. Then, we would run
+
+```bash
+./rs-benchmark \
+    -a ACCESS_KEY \
+    -s SECRET_KEY \
+    -b testbucket \
+    -u https://s3.YOUR_CUSTOMER_NAME.rstorlabs.io \
+    -t 4 \
+    -z 10M \
+    -d 90 \
+    -r any \
+    -protocol s3v4
+```
+
+You can create and manage `ACCESS_KEY` and `SECRET_KEY` by yourself through our Customer UI.
+
+
+If we wanted to benchmark the object storage service from another provider, the `-u` and `-protocol` flags need to be changed with the appropriate host URL and client protocol. For example, if we wanted torun a similar benchmark on Azure, using the same parameters as before, we would run
+
+```bash
+./rs-benchmark \
+    -a ACCESS_KEY \
+    -s SECRET_KEY \
+    -b testbucket \
+    -u https://ACCOUNT_NAME.blob.core.windows.net \
+    -t 4 \
+    -z 10M \
+    -d 90 \
+    -r any \
+    -protocol azure
+```
+
+The same test against Amazon S3 would be:
+
+
+```bash
+./rs-benchmark \
+    -a ACCESS_KEY \
+    -s SECRET_KEY \
+    -b testbucket \
+    -u https://s3.amazonaws.com \
+    -t 4 \
+    -z 10M \
+    -d 90 \
+    -r any \
+    -protocol s3v4
+```
+
+You can test also different combinations of multipart parallel transfers with different chunk sizes. For example, if you wanted to test a 5GB upload with 100MB chunk size and 3 parallel connections, against RStorage, you would run
+
+```bash
+./rs-benchmark \
+    -a ACCESS_KEY \
+    -s SECRET_KEY \
+    -b testbucket \
+    -u https://s3.YOUR_CUSTOMER_NAME.rstorlabs.io \
+    -multipart \
+    -multipart-concurrency 3 \
+    -multipart-size "100M" \
+    -t 4 \
+    -z 5G \
+    -d 90 \
+    -r any \
+    -protocol s3v4
+```
+
+To increase accuracy of test results, you can tell `rs-benchmark` to repeat the test multiple times with the option `-l`.
+
+## Additional notes
+
+#### Azure Blob Storage
+To get started with Azure benchmarking, first obtain credentials from https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-python#copy-your-credentials-from-the-azure-portal. Access key is your account name. The Host URL is in the form of `https://ACCOUNT_NAME.blob.core.windows.net`.
+
+#### Google Cloud Storage
+Authentication at the instance level, so you must run the test from a Google cloud instance, which has been authorized to access the storage. Alternatively, you can use the S3 compatibility layer, with the `s3v4` protocol. 
+
+#### Caveats on multipart
+Multipart tests are enabled only for `s3v4` protocol. Azure has a chunk size limit of 128MB, while Google Cloud Platform has a limit of 32 chunks per multipart upload. These limits make an apple-to-apple comparison difficult, therefore the `-multipart-concurrency` parameter is automatically disabled when used in combination with `-protocol azure` and `gcp`.
