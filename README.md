@@ -43,7 +43,8 @@ sudo apt-get -t stretch-backports install golang
 CentOS 7 / RHEL 7
 
 ```
-sudo yum install epel-release go
+sudo yum install epel-release
+sudo yum install go
 ```
 
 Fedora 29/30
