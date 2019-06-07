@@ -4,7 +4,7 @@
 
 This tool is provided to independently benchmark RStorage S3 service provided by RStor Inc, as well as the other major CSP’s object storage services like Amazon S3, Azure Blob Storage, Google Cloud Storage, as well as others that rely on the same protocols.
 
-We decided to open-source `rs-benchmark` because we found out that other s3-benchmark tools (like [this one](https://github.com/wasabi-tech/s3-benchmark)) don't correctly compute test results: when a `GET` test is performed, the tools only consider as error a bad `HTTP` request, i.e. they don't catch server errors. For example, if the server returns an error, e.g. `404` after requesting a non-existent object, the tools will ignore it and the test is considered passed, thus incorrectly measuring a higher throughput.
+We decided to open-source `rs-benchmark` because we found out that other s3-benchmark tools don't correctly compute test results: when a `GET` test is performed, the tools only consider as error a bad `HTTP` request, i.e. they don't catch server errors. For example, if the server returns an error, e.g. `404` after requesting a non-existent object, the tools will ignore it and the test is considered passed, thus incorrectly measuring a higher throughput.
 
 ## Building
 
@@ -14,6 +14,9 @@ We decided to open-source `rs-benchmark` because we found out that other s3-benc
 - A reasonably recent Linux distro
 
 #### Install Go compiler on Linux
+
+On Ubuntu, first 
+
 
 On Debian, Ubuntu:
 
