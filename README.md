@@ -50,11 +50,11 @@ The executable `rs-benchmark` should now be visible in the project folder.
 
 ## Usage
 
-The tool accepts the following options:
+Syntax:
 ```
 ./rs-benchmark [OPTIONS]
 ```
-Below are the available command line arguments to the program:
+Below are the available command line options to the program:
 
 ```
   -a string
@@ -121,7 +121,7 @@ Suppose we want to benchmark the RStorage S3 service, using a bucket named `test
 You can create and manage `ACCESS_KEY` and `SECRET_KEY` by yourself through our Customer UI.
 
 
-If we wanted to benchmark the object storage service from another provider, the `-u` and `-protocol` flags need to be changed with the appropriate host URL and client protocol. For example, if we wanted torun a similar benchmark on Azure, using the same parameters as before, we would run
+If we wanted to benchmark the object storage service from another provider, the `-u` and `-protocol` flags need to be changed with the appropriate host URL and client protocol. For example, if we wanted to run a similar benchmark on Azure, using the same parameters as before, we would run
 
 ```bash
 ./rs-benchmark \
@@ -178,7 +178,7 @@ To increase accuracy of test results, you can tell `rs-benchmark` to repeat the 
 To get started with Azure benchmarking, first obtain credentials from https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-python#copy-your-credentials-from-the-azure-portal. Access key is your account name. The Host URL is in the form of `https://ACCOUNT_NAME.blob.core.windows.net`.
 
 #### Google Cloud Storage
-Authentication at the instance level, so you must run the test from a Google cloud instance, which has been authorized to access the storage. Alternatively, you can use the S3 compatibility layer, with the `s3v4` protocol. 
+Authentication hapens at instance level, so you must run the test from a Google cloud instance, which has been authorized to access the storage. Alternatively, you can use the S3 compatibility layer, with the `s3v4` protocol. 
 
 #### Caveats on multipart
 Multipart tests are enabled only for `s3v4` protocol. Azure has a chunk size limit of 128MB, while Google Cloud Platform has a limit of 32 chunks per multipart upload. These limits make an apple-to-apple comparison difficult, therefore the `-multipart-concurrency` parameter is automatically disabled when used in combination with `-protocol azure` and `gcp`.
