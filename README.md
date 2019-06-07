@@ -37,20 +37,19 @@ Debian
 On Debian Stretch, you will need to enable backports (https://backports.debian.org/Instructions/) and install with:
 
 ```
-apt-get -t stretch-backports install golang
+sudo apt-get -t stretch-backports install golang
 ```
 
 CentOS 7 / RHEL 7
 
 ```
-yum install epel-release
-yum install go
+sudo yum install epel-release go
 ```
 
 Fedora 29/30
 
 ```
-dnf install golang
+sudo dnf install golang
 ```
 
 If you cannot find a package for your distro, follow the instructions at https://golang.org/doc/install
