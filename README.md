@@ -15,26 +15,42 @@ We decided to open-source `rs-benchmark` because we found out that other s3-benc
 
 #### Install Go compiler on Linux
 
-On Ubuntu, first 
+Ubuntu 18.04
 
-
-On Debian, Ubuntu:
-
+First add the repository:
 ```
-sudo apt-get install golang
+sudo add-apt-repository ppa:gophers/archive && \
+sudo apt-get update
+```
+Then, install the Go package:
+```
+sudo apt-get install golang-1.11-go
+```
+Finally, update the `$PATH` variable:
+```
+echo 'export PATH="/usr/lib/go-1.11/bin:$PATH"' >> ~/.bashrc && \
+source ~/.bashrc
 ```
 
-On Debian stretch, you will need to enable backports (https://backports.debian.org/Instructions/) and install with:
+Debian
+
+On Debian Stretch, you will need to enable backports (https://backports.debian.org/Instructions/) and install with:
 
 ```
 apt-get -t stretch-backports install golang
 ```
 
-On CentOS 7 / RHEL 7:
+CentOS 7 / RHEL 7
 
 ```
 yum install epel-release
 yum install go
+```
+
+Fedora 29/30
+
+```
+dnf install golang
 ```
 
 If you cannot find a package for your distro, follow the instructions at https://golang.org/doc/install
