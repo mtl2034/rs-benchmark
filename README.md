@@ -125,8 +125,8 @@ If we wanted to benchmark the object storage service from another provider, the 
 
 ```bash
 ./rs-benchmark \
-    -a ACCESS_KEY \
-    -s SECRET_KEY \
+    -a ACCOUNT_NAME \
+    -s ACCOUNT_KEY \
     -b testbucket \
     -u https://ACCOUNT_NAME.blob.core.windows.net \
     -t 4 \
