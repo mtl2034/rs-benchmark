@@ -197,7 +197,7 @@ To increase accuracy of test results, you can tell `rs-benchmark` to repeat the 
 To get started with Azure benchmarking, first obtain credentials from https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-python#copy-your-credentials-from-the-azure-portal. Access key is your account name. The Host URL is in the form of `https://ACCOUNT_NAME.blob.core.windows.net`.
 
 #### Google Cloud Storage
-Authentication hapens at instance level, so you must run the test from a Google cloud instance, which has been authorized to access the storage. Alternatively, you can use the S3 compatibility layer, with the `s3v4` protocol. 
+Authentication happens at instance level, so you must run the test from a Google cloud instance, which has been authorized to access the storage. Alternatively, you can use the S3 compatibility layer, with the `s3v4` protocol. 
 
 #### Caveats on multipart
 Multipart tests are enabled only for `s3v4` protocol. Azure has a chunk size limit of 128MB, while Google Cloud Platform has a limit of 32 chunks per multipart upload. These limits make an apple-to-apple comparison difficult, therefore the `-multipart-concurrency` parameter is automatically disabled when used in combination with `-protocol azure` and `gcp`.
