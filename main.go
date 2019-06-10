@@ -264,6 +264,7 @@ func main() {
 	err = client.Prepare(bucket)
 	if err != nil {
 		log.Fatal(err)
+		fmt.Println("For more information, run again with flag -v.")
 	}
 
 	// Initialize data for the bucket
@@ -328,6 +329,9 @@ func runLoop(loop int, pauseBetweenPhases bool) {
 
 	if len(successFulUploadsIDs) < 5 {
 		log.Fatal("Not enough successful uploads to continue.")
+		if verbose == false {
+			fmt.Println("For more information, run again with flag -v.")
+		}
 	}
 
 	if pauseBetweenPhases {
@@ -367,6 +371,7 @@ func runLoop(loop int, pauseBetweenPhases bool) {
 
 	if successfulDownloads == 0 {
 		log.Fatal("All downloads failed")
+		fmt.Println("For more information, run again with flag -v.")
 	}
 
 	mbPs := (float64(downloadedBytes) / downloadTime) / (1000 * 1000)
