@@ -82,7 +82,7 @@ func main() {
 	myflag.StringVar(&objPrefix, "prefix", "Object", "will create objects with key: 'prefix-number'")
 	myflag.IntVar(&maxRetries, "maxRetries", 0, "number of retries on failure (default 0. s3v4 only)")
 	myflag.StringVar(&sizeArg, "z", "1M", "Size of objects in bytes with suffix K, M, and G")
-	myflag.StringVar(&multipartSizeArg, "multipart-size", "5M", "Size of the multipart parts")
+	myflag.StringVar(&multipartSizeArg, "multipart-size", "5M", "Size of the multipart chunks")
 
 	//If no arguments are passed
 	if len(os.Args) == 1 {
