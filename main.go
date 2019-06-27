@@ -114,7 +114,7 @@ func main() {
 
 	fmt.Printf("rs-benchmark v%s - a compact tool for benchmarking different object storages\n",version)
 	fmt.Println("Copyright (C) 2016-2019 RStor Inc (open-source@rstor.io)")
-	fmt.Println("Released under GPL v3 licence\n")
+	fmt.Println("Released under GPL v3 license\n")
 
 	if help == true {
 		fmt.Println("Available arguments:")
@@ -199,11 +199,6 @@ func main() {
 		printHelp()
 	}
 
-	multipartStr := "none"
-	if useMultipart {
-		multipartStr = fmt.Sprintf("true,%s,%v", multipartSizeArg, multipartConcurrency)
-	}
-
 	switch protocol {
 	case "s3v4":
 		v4Client := NewS3AwsV4(access_key, secret_key, url_host, region)
@@ -242,7 +237,8 @@ func main() {
 		gup.UseMultipart = useMultipart
 		client = gup
 	default:
-		fmt.Println("unknown client type: available: s3v4, s3v2, azure")
+		fmt.Println("unknown client type: available: s3v4, s3v2, azure, gpc")
+		printHelp()
 	}
 	fmt.Println("Benchmark parameters:")
 
@@ -257,7 +253,11 @@ func main() {
 	fmt.Printf("%-15s%d\n", "Threads", threads)
 	fmt.Printf("%-15s%s\n", "Size", sizeArg)
 	fmt.Printf("%-15s%d\n", "Loops", loops)
-	fmt.Printf("%-15s%s\n", "Multipart", multipartStr)
+	fmt.Printf("%-15s%t", "Multipart", useMultipart)
+	if useMultipart == true {
+		fmt.Printf(", %s per part, %d parallel uploads", multipartSizeArg, multipartConcurrency)
+	}
+	fmt.Println("")
 	fmt.Printf("%-15s%d\n", "Max retries", maxRetries)
 
 	// Test access to the bucket
