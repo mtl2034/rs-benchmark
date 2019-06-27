@@ -80,7 +80,7 @@ func main() {
 	myflag.BoolVar(&pauseBetweenPhases, "pause", false, "whether to pause between upload and download tests")
 	myflag.StringVar(&hostIP, "ip", "", "forces all hostnames to resolve to this address (s3v2, s3v4 only)")
 	myflag.StringVar(&objPrefix, "prefix", "Object", "will create objects with key: 'prefix-number'")
-	myflag.IntVar(&maxRetries, "maxRetries", 0, "number of retries on failure (default 0. s3v4 only")
+	myflag.IntVar(&maxRetries, "maxRetries", 0, "number of retries on failure (default 0. s3v4 only)")
 	myflag.StringVar(&sizeArg, "z", "1M", "Size of objects in bytes with suffix K, M, and G")
 	myflag.StringVar(&multipartSizeArg, "multipart-size", "5M", "Size of the multipart parts")
 
