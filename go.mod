@@ -1,4 +1,3 @@
-
 // rs-benchmark - A utility to benchmark object storages
 // Copyright (C) 2016-2019 RStor Inc (open-source@rstor.io)
 //
@@ -16,8 +15,6 @@
 //
 // You should have received a copy of the GNU General Public License
 //along with Copyright Header.  If not, see <http://www.gnu.org/licenses/>.
-
-
 
 module rs-benchmark
 
