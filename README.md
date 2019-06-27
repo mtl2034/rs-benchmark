@@ -95,7 +95,7 @@ Below are the available command line options to the program:
   -multipart-concurrency int
     	concurrency to use for multipart requests (default 5)
   -multipart-size string
-    	Size of the multipart parts (default "5M")
+    	Size of the multipart chunks (default "5M")
   -pause
     	whether to pause between phases
   -prefix string
@@ -122,7 +122,7 @@ At a bare minimum you need to specify: `-a` (access key), `-s` (secret key), `-b
 
 ## Examples
 
-Suppose we want to benchmark the RStorage S3 service, using a bucket named `testbucket`, having object size of 10MB, for 90 seconds, using 4 parallel transfers. Then, we would run
+Suppose we want to benchmark the RStorage S3 service, using a bucket named `testbucket`, having object size of 10MB, for 90 seconds, using 4 parallel transfers (the number of files to be uploaded in parallel). Then, we would run
 
 ```bash
 ./rs-benchmark \
@@ -171,7 +171,7 @@ The same test against Amazon S3 would be:
     -protocol s3v4
 ```
 
-You can test also different combinations of multipart parallel transfers with different chunk sizes. For example, if you wanted to test a 5GB upload with 100MB chunk size and 3 parallel connections, against RStorage, you would run
+You can test also different combinations of multipart parallel transfers with different chunk sizes. For example, if you wanted to test a 5GB upload with 100MB chunk size and 3 parallel connections (the number of multipart chunks to be uploaded in parallel), against RStorage, you would run
 
 ```bash
 ./rs-benchmark \
@@ -188,6 +188,8 @@ You can test also different combinations of multipart parallel transfers with di
     -r any \
     -protocol s3v4
 ```
+
+In this last example, the tool will upload 12 chunks in parallel (`multipart-concurrency = 3` chunks times `threads = 4` files).
 
 To increase accuracy of test results, you can tell `rs-benchmark` to repeat the test multiple times with the option `-l`.
 
