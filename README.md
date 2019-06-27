@@ -1,6 +1,6 @@
 ## Introduction
 
-`rs-benchmark` is a performance testing tool provided by [RStor Inc](https://rstor.io/) to effectively compare different object storages with different protocols. The testing tool is loosely based on the [Nasuni](https://www.nasuni.com/infographic-2015-state-of-cloud-storage/) performance benchmarking methodologies used to test the performance of different cloud storage providers.
+`rs-benchmark` is a performance testing tool provided by [RStor Inc](https://rstor.io/) to effectively compare different object storages with different protocols. This tool is an improvement of [the one](https://github.com/wasabi-tech/s3-benchmark) developed by Wasabi-Tech.
 
 This tool is provided to independently benchmark RStorage S3 service provided by RStor Inc, as well as the other major CSP’s object storage services like Amazon S3, Azure Blob Storage, Google Cloud Storage, as well as others that rely on the same protocols.
 
