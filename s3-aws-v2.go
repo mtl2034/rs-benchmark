@@ -86,24 +86,28 @@ func (u *S3AwsV2) DoDownload(ctx context.Context, id int) (result TransferResult
 
 	resp, err := httpClient.Do(req)
 	if err != nil {
-		result.Error = fmt.Errorf("Error downloading object %s: %v", path, err)
+		result.Error = fmt.Errorf("error downloading object %s: %v", path, err)
 		return
 	}
 
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == http.StatusServiceUnavailable {
 			result.Error = fmt.Errorf("slowdown requested")
-			return
+		} else {
+			result.Error = fmt.Errorf("non-ok status %d, %v", resp.StatusCode, resp.Status)
 		}
 
-		result.Error = fmt.Errorf("non-ok status %d, %v", resp.StatusCode, resp.Status)
+		if resp.Body != nil {
+			_, _ = io.Copy(ioutil.Discard, resp.Body)
+			_ = resp.Body.Close()
+		}
+
 		return
 	}
 
 	if resp.Body == nil {
 		result.Error = fmt.Errorf("empty body")
 		return
-
 	}
 
 	// Receive response
@@ -112,6 +116,8 @@ func (u *S3AwsV2) DoDownload(ctx context.Context, id int) (result TransferResult
 		result.Error = fmt.Errorf("error receiving response %v", err.Error())
 		return
 	}
+
+	_ = resp.Body.Close()
 
 	if uint64(copied) != object_size {
 		result.Error = fmt.Errorf("wrong response size")
@@ -127,6 +133,7 @@ func (u *S3AwsV2) DoUpload(ctx context.Context, id int, data io.ReadSeeker) (res
 	key := fmt.Sprintf("%s-%d", objPrefix, id)
 	path := fmt.Sprintf("%s/%s/%s", u.Host, u.Bucket, key)
 
+	result.Id = id
 	req, _ := http.NewRequest("PUT", path, fileobj)
 	req = req.WithContext(ctx)
 	req.Header.Set("Content-Length", strconv.FormatUint(object_size, 10))
@@ -140,9 +147,7 @@ func (u *S3AwsV2) DoUpload(ctx context.Context, id int, data io.ReadSeeker) (res
 		return result
 	}
 
-	result.Id = id
-
-	if resp != nil && resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusOK {
 		if resp.StatusCode == http.StatusServiceUnavailable {
 			result.Error = fmt.Errorf("slowdown requested")
 		} else {
@@ -154,6 +159,7 @@ func (u *S3AwsV2) DoUpload(ctx context.Context, id int, data io.ReadSeeker) (res
 				resp.StatusCode, resp.Status, string(body))
 		}
 	}
+
 	return result
 }
 
