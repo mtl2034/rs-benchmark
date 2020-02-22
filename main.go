@@ -33,6 +33,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"code.cloudfoundry.org/bytefmt"
@@ -112,7 +113,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	fmt.Printf("rs-benchmark v%s - a compact tool for benchmarking different object storages\n",version)
+	fmt.Printf("rs-benchmark v%s - a compact tool for benchmarking different object storages\n", version)
 	fmt.Println("Copyright (C) 2016-2019 RStor Inc (open-source@rstor.io)")
 	fmt.Println("Released under GPL v3 license\n")
 
@@ -126,7 +127,7 @@ func main() {
 	if protocol == "" {
 		fmt.Println("Missing argument -protocol for client protocol.")
 		printHelp()
-		
+
 	}
 
 	if protocol == "s3v4" && region == "" {
@@ -385,12 +386,26 @@ func runLoop(loop int, pauseBetweenPhases bool) {
 
 	ctx = context.Background()
 	fmt.Println("Deleting test objects")
+	deleteChan := make(chan int)
+	deleteWg := sync.WaitGroup{}
+	deleteWg.Add(threads)
+	for n := 0; n <= threads; n++ {
+		go func() {
+			defer deleteWg.Done()
+
+			for idx := range deleteChan {
+				_ = client.DoDelete(ctx, idx)
+			}
+		}()
+	}
 	for i, v := range successFulUploadsIDs {
+		deleteChan <- v
 		if i > 0 && i%1000 == 0 {
 			fmt.Printf("%d deletes completed\n", i)
 		}
-		_ = client.DoDelete(ctx, v)
 	}
+	close(deleteChan)
+	deleteWg.Wait()
 }
 
 func runAndCollectResults(indexes chan int, res chan TransferResult) []TransferResult {
