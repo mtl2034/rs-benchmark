@@ -19,3 +19,18 @@ func TestInfiniteReader(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkInfiniteReader(b *testing.B) {
+	sizes := []int{10, 100, 1000, 100000, 1000000}
+
+	for _, size := range sizes {
+		b.Run(fmt.Sprintf("%d", size), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				reader := InfiniteReader{Size: int64(size)}
+				out, err := ioutil.ReadAll(&reader)
+				require.NoError(b, err)
+				require.Equal(b, size, len(out))
+			}
+		})
+	}
+}
