@@ -29,12 +29,14 @@ func (t *InfiniteReader) Read(p []byte) (n int, err error) {
 	} else {
 		toWrite = t.Size - t.wrote
 	}
-	p = make([]byte, toWrite)
+
+	p = p[0:toWrite]
 	w, err := rand.Read(p)
 	if err != nil {
 		t.wrote = t.wrote + int64(w)
 		return w, err
 	}
+
 	t.wrote = t.wrote + toWrite
 	return int(toWrite), nil
 }
